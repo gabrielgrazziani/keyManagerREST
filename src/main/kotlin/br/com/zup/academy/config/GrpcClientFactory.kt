@@ -1,6 +1,7 @@
 package br.com.zup.academy.config
 
 import br.com.zup.academy.KeyManagerGRPCServiceGrpc
+import br.com.zup.academy.KeymanagerRemoveGrpcServiceGrpc
 import io.grpc.ManagedChannel
 import io.micronaut.context.annotation.Factory
 import io.micronaut.grpc.annotation.GrpcChannel
@@ -11,5 +12,8 @@ class GrpcClientFactory(@GrpcChannel("key-manager-grpc") val channel: ManagedCha
 
     @Singleton
     fun cadastro() = KeyManagerGRPCServiceGrpc.newBlockingStub(channel)
+
+    @Singleton
+    fun deleta() = KeymanagerRemoveGrpcServiceGrpc.newBlockingStub(channel)
 
 }
