@@ -16,7 +16,6 @@ import javax.validation.constraints.Size
 
 @Controller("api/v1/clientes/{idTitular}/pix")
 @ErrorHandlerGrpc
-@Validated
 class DeletarChavePixController(
     val grpc: KeymanagerRemoveGrpcServiceGrpc.KeymanagerRemoveGrpcServiceBlockingStub
 ) {
