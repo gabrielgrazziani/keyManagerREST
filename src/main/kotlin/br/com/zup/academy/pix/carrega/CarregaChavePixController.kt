@@ -1,9 +1,8 @@
-package br.com.zup.academy.pix.busca
+package br.com.zup.academy.pix.carrega
 
-import br.com.zup.academy.BuscaChavePixPorIdPixRequest
-import br.com.zup.academy.BuscaChavePixResponse
-import br.com.zup.academy.KeymanagerBuscaGrpcServiceGrpc
+import br.com.zup.academy.*
 import br.com.zup.academy.error.ErrorHandlerGrpc
+import br.com.zup.academy.pix.paraLocalDateTime
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.google.protobuf.Timestamp
 import io.micronaut.core.annotation.Introspected
@@ -18,8 +17,9 @@ import java.util.*
 
 @Controller("api/v1/clientes/{idTitular}/pix")
 @ErrorHandlerGrpc
-class BuscaChavePixController(
-    val grpc: KeymanagerBuscaGrpcServiceGrpc.KeymanagerBuscaGrpcServiceBlockingStub
+class CarregaChavePixController(
+    val grpcBusca: KeymanagerBuscaGrpcServiceGrpc.KeymanagerBuscaGrpcServiceBlockingStub,
+    val grpcLista: KeymanagerListarGrpcServiceGrpc.KeymanagerListarGrpcServiceBlockingStub
 ) {
 
     @Get("{idPix}")
@@ -28,13 +28,27 @@ class BuscaChavePixController(
             .setIdPix(idPix.toString())
             .setIdTitular(idTitular.toString())
             .build()
-        val response = grpc.buscaPorIdPix(request)
+        val response = grpcBusca.buscaPorIdPix(request)
 
         return HttpResponse.ok(response.paraDetelhesChavePixResponse())
     }
+
+    @Get
+    fun lista(@PathVariable idTitular: UUID): HttpResponse<List<ChavePixItemListaResponse>>{
+        val request = ListaChavesRequest.newBuilder()
+            .setIdTitular(idTitular.toString())
+            .build()
+        val response = grpcLista.listar(request)
+            .chavesList
+            .map {
+                it.paraChavePixItemListaResponse()
+            };
+
+        return HttpResponse.ok(response)
+    }
 }
 
-fun  BuscaChavePixResponse.paraDetelhesChavePixResponse(): DetelhesChavePixResponse{
+fun  BuscaChavePixResponse.paraDetelhesChavePixResponse(): DetelhesChavePixResponse {
     return DetelhesChavePixResponse(
         idTitular = idTitular,
         idPix = idPix,
@@ -54,10 +68,27 @@ fun  BuscaChavePixResponse.paraDetelhesChavePixResponse(): DetelhesChavePixRespo
     )
 }
 
-fun Timestamp.paraLocalDateTime(): LocalDateTime{
-    val instant = Instant.ofEpochSecond(seconds, nanos.toLong())
-    return LocalDateTime.ofInstant(instant, ZoneId.of("UTC"))
+fun ListaChavesResponse.ChavesResponse.paraChavePixItemListaResponse(): ChavePixItemListaResponse {
+    return ChavePixItemListaResponse(
+        idPix = idPix,
+        idTitular = idTitular,
+        tipoChave = tipoChave.name,
+        tipoConta = tipoConta.name,
+        valorChave = valorChave,
+        criadaEm = criadoEm.paraLocalDateTime()
+    )
 }
+
+@Introspected
+data class ChavePixItemListaResponse(
+    val idTitular: String,
+    val idPix: String,
+    val tipoChave: String,
+    val valorChave: String,
+    val tipoConta: String,
+    @field:JsonFormat(pattern = "yyyy-MM-dd'T'hh:mm:ss")
+    val criadaEm: LocalDateTime,
+)
 
 data class DetelhesChavePixResponse(
    val idTitular: String,
