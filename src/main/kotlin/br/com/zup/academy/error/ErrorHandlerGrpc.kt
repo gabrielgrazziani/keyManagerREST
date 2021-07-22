@@ -35,7 +35,7 @@ class ErrorHandlerGrpcInterceptor: MethodInterceptor<BindableService, Any?> {
             Pair(HttpStatus.INTERNAL_SERVER_ERROR,Error(e.status.description))
             val (statusHttp,bodyError) = when (e.status.code) {
                 Status.NOT_FOUND.code -> Pair(HttpStatus.NOT_FOUND,ErrorResponse(e.status.description ?: ""))
-                Status.ALREADY_EXISTS.code -> Pair(HttpStatus.CONFLICT,ErrorResponse(e.status.description ?: ""))
+                Status.ALREADY_EXISTS.code -> Pair(HttpStatus.UNPROCESSABLE_ENTITY,ErrorResponse(e.status.description ?: ""))
                 Status.INVALID_ARGUMENT.code -> {
                     val violacaons = e
                         .getViolacaons()

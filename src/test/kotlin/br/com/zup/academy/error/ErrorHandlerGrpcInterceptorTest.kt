@@ -37,7 +37,7 @@ internal class ErrorHandlerGrpcInterceptorTest{
     }
 
     @Test
-    internal fun `deve dar um 409 quando o grpc der ALREADY_EXISTS`() {
+    internal fun `deve dar um 422 quando o grpc der ALREADY_EXISTS`() {
         val mensagem = "registro já existe"
         val notFoundException = StatusRuntimeException(Status.ALREADY_EXISTS
             .withDescription(mensagem))
@@ -50,7 +50,7 @@ internal class ErrorHandlerGrpcInterceptorTest{
 
         val resposta = interceptor.intercept(context) as HttpResponse<ErrorResponse>
 
-        assertEquals(HttpStatus.CONFLICT, resposta.status)
+        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, resposta.status)
         assertNotNull(resposta.body())
         assertEquals(mensagem, resposta.body().message)
     }
