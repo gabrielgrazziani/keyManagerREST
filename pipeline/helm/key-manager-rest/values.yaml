@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: public.ecr.aws/d8b2x5c9/key-manager-rest
+  repository: public.ecr.aws/i2c7a5l2/ot5-gabrielgrazziani/key-manager-rest
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
@@ -38,7 +38,7 @@ securityContext: {}
 
 service:
   type: LoadBalancer
-  port: 80
+  port: 8080
 
 ingress:
   enabled: false
