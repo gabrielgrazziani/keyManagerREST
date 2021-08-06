@@ -1,4 +1,4 @@
-FROM openjdk:16
+FROM openjdk:11
 EXPOSE 8080
 
 ARG JAR_FILE=build/libs/*-all.jar

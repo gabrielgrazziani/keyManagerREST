@@ -47,18 +47,18 @@ application {
     mainClass.set("br.com.zup.academy.ApplicationKt")
 }
 java {
-    sourceCompatibility = JavaVersion.toVersion("14")
+    sourceCompatibility = JavaVersion.toVersion("11")
 }
 
 tasks {
     compileKotlin {
         kotlinOptions {
-            jvmTarget = "14"
+            jvmTarget = "11"
         }
     }
     compileTestKotlin {
         kotlinOptions {
-            jvmTarget = "14"
+            jvmTarget = "11"
         }
     }
 
